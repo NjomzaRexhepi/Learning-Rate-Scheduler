@@ -4,13 +4,11 @@ import torch.optim as optim
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 
-# Generate synthetic classification data
 def generate_data(n_samples=1000):
     X = torch.randn(n_samples, 10)
     y = torch.randint(0, 5, (n_samples,))  # 5 classes
     return X, y
 
-# Define a simple model
 class SimpleModel(nn.Module):
     def __init__(self):
         super().__init__()
@@ -19,31 +17,25 @@ class SimpleModel(nn.Module):
     def forward(self, x):
         return self.fc(x)
 
-# Accuracy calculation
 def compute_accuracy(logits, labels):
     preds = torch.argmax(logits, dim=1)
     return (preds == labels).float().mean().item()
 
-# Hyperparameters
 n_epochs = 150
 learning_rate = 0.01
 
-# Prepare data
 X, y = generate_data()
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Initialize model, loss, optimizer, and scheduler
 model = SimpleModel()
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(model.parameters(), lr=learning_rate)
 scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=2)
 
-# Tracking metrics
 train_losses, test_losses = [], []
 train_accuracies, test_accuracies = [], []
 lrs = []
 
-# Training loop
 for epoch in range(n_epochs):
     model.train()
     optimizer.zero_grad()
@@ -51,25 +43,22 @@ for epoch in range(n_epochs):
     loss = criterion(outputs, y_train)
     loss.backward()
     optimizer.step()
-    scheduler.step(epoch + 0.0)  # float epoch to support warm restarts
+    scheduler.step(epoch + 0.0)
 
     train_acc = compute_accuracy(outputs, y_train)
 
-    # Evaluation
     model.eval()
     with torch.no_grad():
         test_outputs = model(X_test)
         test_loss = criterion(test_outputs, y_test)
         test_acc = compute_accuracy(test_outputs, y_test)
 
-    # Save metrics
     train_losses.append(loss.item())
     test_losses.append(test_loss.item())
     train_accuracies.append(train_acc)
     test_accuracies.append(test_acc)
     lrs.append(optimizer.param_groups[0]["lr"])
 
-# Plotting
 plt.figure(figsize=(14, 6))
 
 plt.subplot(1, 3, 1)

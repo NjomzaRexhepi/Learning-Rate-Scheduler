@@ -9,7 +9,6 @@ def generate_data(n_samples=1000):
     y = torch.randint(0, 5, (n_samples,))
     return X, y
 
-# Define a simple model
 class SimpleModel(nn.Module):
     def __init__(self):
         super().__init__()

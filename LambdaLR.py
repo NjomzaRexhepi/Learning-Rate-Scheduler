@@ -10,7 +10,7 @@ output_size = 5
 n_samples = 100
 
 model = nn.Linear(input_size, output_size)
-optimizer = optim.SGD(model.parameters(), lr=0.1)  # More reasonable initial learning rate
+optimizer = optim.SGD(model.parameters(), lr=0.1)
 lambda1 = lambda epoch: 0.95 ** epoch
 scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lambda1)
 
